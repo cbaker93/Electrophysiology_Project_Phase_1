@@ -61,17 +61,17 @@ figure
 
 subplot(2,2,1)
 plot(time, gKgv, 'b',  time, gNagv, 'r')
-title('gK (blue) and gNa (red)')
-xlabel ms
-ylabel mS/cm^2 
+title('gK and gNa')
+xlabel Time (ms)
+ylabel Conductance (mS/cm^2) 
+legend('gK', 'gNa')
 subplot(2,2,2)
 plot(time, Vmgv)
 title('Membrane Voltage')
 axis([0 100 -80 10])
-xlabel ms
-ylabel mV
-
-
+xlabel Time (ms)
+ylabel Voltage(mV)
+legend('Membrane Voltage')
 
 
 
