@@ -17,7 +17,6 @@ I = 5; %% External Current Applied, microA/cm^2
 gKgv = [];
 gNagv = [];
 Vmgv = [];
-
 am = 0.1*((25-Vm)/(exp((25-Vm)/10)-1));
 bm = 4*exp(-Vm/18);
 an = 0.01*((10-Vm)/(exp((10-Vm)/10)-1));
@@ -29,8 +28,15 @@ m = am/(am+bm);
 n = an/(an+bn);
 h = ah/(ah+bh);
 
+
 for i = time
     
+am = 0.1*((25-Vm)/(exp((25-Vm)/10)-1));
+bm = 4*exp(-Vm/18);
+an = 0.01*((10-Vm)/(exp((10-Vm)/10)-1));
+bn = 0.125*exp(-Vm/80);
+ah = 0.07*exp(-Vm/20);
+bh = 1/(exp((30-Vm)/10)+1);
 
 
 gKgraph = gK*n^4;
@@ -39,7 +45,7 @@ gNagraph = m^3*h*gNa;
 gKgv = [gKgv gKgraph];
 gNagv = [gNagv gNagraph];
 
-if i > .5
+if i > 500      % Current stops after 0.5 ms
    I = 0;
    end
 
@@ -54,10 +60,10 @@ dm = am * (1-m) - bm*m;
 dn = an * (1-n) - bn*n;
 dh = ah * (1-h) - bh*h;
 
-Vma = Vm - 70;
+Vma = Vm - 70; % Adjusting for baseline
 
 Vmgv = [Vmgv Vma];
-Vm = Vm + 0.01*dVm;
+Vm = Vm + 0.01*dVm; % Differentials / Eulers method
 m = m + 0.01*dm;
 n = n + 0.01*dn;
 h = h + 0.01*dh;
@@ -68,16 +74,25 @@ figure
 subplot(2,2,1)
 plot(time, gKgv, 'b',  time, gNagv, 'r')
 title('gK and gNa')
-xlabel Time (ms)
-ylabel Conductance (mS/cm^2) 
+xlabel ('Time (ms)')
+ylabel ('Conductance (mS/cm^2)') 
 legend('gK', 'gNa')
 subplot(2,2,2)
 plot(time, Vmgv)
 title('Membrane Voltage')
-axis([0 100 -80 10])
-xlabel Time (ms)
-ylabel Voltage(mV)
+%%axis([0 100 -80 10])
+xlabel ('Time (ms)')
+ylabel ('Voltage (mV)')
 legend('Membrane Voltage')
+
+
+
+
+
+
+
+
+
 
 
 
