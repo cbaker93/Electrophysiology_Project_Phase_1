@@ -1,3 +1,7 @@
+%%%% Christopher Baker
+%%%% Electrophysiology part 1 
+
+%% Constants
 gK = 36; %% Na+ conductance mS/cm^2
 gNa = 120; %% K+ conductance mS/cm^2
 gL = 0.3; %% leakage conductance mS/cm^2
@@ -9,16 +13,15 @@ Cm = 1; %% membrane capacitance uF/cm^2
 Vm = 0; %% starting membrane voltage
 %% It is set to 0 instead of -70 because at 0 it will behave properly as the baseline. 
 %% Later, -70mV will be added to the membrane voltage vector to fix it.
-
 time = [1:0.01:100]; %% Time Vector, ms
 
 I = 5; %% External Current Applied, microA/cm^2
+%% Vectors for graph
+gKgv = []; 
+gNagv = [];
+Vmgv = [];
 
-gKgv = []; % vectors for graph
-gNagv = []; % ^
-Vmgv = []; % ^
-
-%% Parameters, must set initial values
+%% Parameters that need to be initialized
 am = 0.1*((25-Vm)/(exp((25-Vm)/10)-1));
 bm = 4*exp(-Vm/18);
 an = 0.01*((10-Vm)/(exp((10-Vm)/10)-1));
@@ -29,9 +32,10 @@ m = am/(am+bm);
 n = an/(an+bn);
 h = ah/(ah+bh);
 
-
+%% Setting for loop to run through time vector
 for i = time
-    
+ 
+%recalculating parameters
 am = 0.1*((25-Vm)/(exp((25-Vm)/10)-1));
 bm = 4*exp(-Vm/18);
 an = 0.01*((10-Vm)/(exp((10-Vm)/10)-1));
@@ -39,10 +43,11 @@ bn = 0.125*exp(-Vm/80);
 ah = 0.07*exp(-Vm/20);
 bh = 1/(exp((30-Vm)/10)+1);
 
-
+% Channel Conductance
 gKgraph = gK*n^4;
 gNagraph = m^3*h*gNa;
 
+%Graph Vectors
 gKgv = [gKgv gKgraph];
 gNagv = [gNagv gNagraph];
 
@@ -50,34 +55,36 @@ if i > 500      % Current stops after 0.5 ms
    I = 0;
    end
 
-
+%Current Equations
 INa = m^3 * gNa * h * (Vm - ENa);
 IK = n^4 * gK * (Vm - EK);
 IL = gL * (Vm - EL);
 Iion = I - IK - INa - IL;
 
 dVm = Iion / Cm; %%% finding step of membrane voltage
-dm = am * (1-m) - bm*m;
+dm = am * (1-m) - bm*m; %% Differentials of parameters
 dn = an * (1-n) - bn*n;
 dh = ah * (1-h) - bh*h;
 
 Vma = Vm - 70; % Adjusting for baseline
 
-Vmgv = [Vmgv Vma];
-Vm = Vm + 0.01*dVm; % Differentials / Eulers method
+Vmgv = [Vmgv Vma]; % Graph vector for membrane voltage
+Vm = Vm + 0.01*dVm; % Eulers method to calculate new values
 m = m + 0.01*dm;
 n = n + 0.01*dn;
 h = h + 0.01*dh;
 end
 
 figure
-
+%% gK and gNA graph
 subplot(2,2,1)
 plot(time, gKgv, 'b',  time, gNagv, 'r')
 title('gK and gNa')
 xlabel ('Time (ms)')
 ylabel ('Conductance (mS/cm^2)') 
 legend('gK', 'gNa')
+
+%Membrane voltage graph
 subplot(2,2,2)
 plot(time, Vmgv)
 title('Membrane Voltage')
@@ -85,15 +92,4 @@ title('Membrane Voltage')
 xlabel ('Time (ms)')
 ylabel ('Voltage (mV)')
 legend('Membrane Voltage')
-
-
-
-
-
-
-
-
-
-
-
 
