@@ -14,16 +14,17 @@ time = [1:0.01:100]; %% Time Vector, ms
 
 I = 5; %% External Current Applied, microA/cm^2
 
-gKgv = [];
-gNagv = [];
-Vmgv = [];
+gKgv = []; % vectors for graph
+gNagv = []; % ^
+Vmgv = []; % ^
+
+%% Parameters, must set initial values
 am = 0.1*((25-Vm)/(exp((25-Vm)/10)-1));
 bm = 4*exp(-Vm/18);
 an = 0.01*((10-Vm)/(exp((10-Vm)/10)-1));
 bn = 0.125*exp(-Vm/80);
 ah = 0.07*exp(-Vm/20);
 bh = 1/(exp((30-Vm)/10)+1);
-
 m = am/(am+bm);
 n = an/(an+bn);
 h = ah/(ah+bh);
